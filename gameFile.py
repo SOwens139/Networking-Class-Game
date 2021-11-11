@@ -20,8 +20,8 @@ coins = 0
 currentMap = 0 
 
 #image loading into memory
-fireflys_image = pygame.image.load('Effect_fireflys.png')
-sky_image = pygame.image.load('sky.png')
+fireflys_image = pygame.image.load('Assets/Effect_fireflys.png')
+sky_image = pygame.image.load('Assets/sky.png')
 
 
 start_ticks=pygame.time.get_ticks() #starter tick
@@ -32,9 +32,9 @@ class World():
         self.tile_list = []
 
         #loading images/blocks
-        dirt_image = pygame.image.load('dirt.png')
-        grass_image = pygame.image.load('grassBlock.png')
-        player_image = pygame.image.load('player.png')
+        dirt_image = pygame.image.load('Assets/dirt.png')
+        grass_image = pygame.image.load('Assets/grassBlock.png')
+        player_image = pygame.image.load('Assets/player.png')
         
         row_count = 0
 
