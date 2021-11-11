@@ -3,17 +3,6 @@ from pygame import image
 from pygame.locals import *
 from socket import *
 
-'''
-serverName = 'localHost'
-serverPort = 12000
-clientSocket = socket(AF_INET, SOCK_STREAM)
-clientSocket.connect((serverName,serverPort))
-clientSocket.sendall(str.encode("\n".join([str(coins),str(round(timer)),str(currentMap)])))
-score = clientSocket.recv(1024)
-print('From Server: ',score.decode())
-clientSocket.close()
-'''
-
 pygame.init()
 
 #game window size
