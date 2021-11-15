@@ -3,6 +3,17 @@ from pygame import image
 from pygame.locals import *
 from socket import *
 
+'''
+serverName = 'localHost'
+serverPort = 12000
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect((serverName,serverPort))
+clientSocket.sendall(str.encode("\n".join([str(coins),str(round(timer)),str(currentMap)])))
+score = clientSocket.recv(1024)
+print('From Server: ',score.decode())
+clientSocket.close()
+'''
+
 pygame.init()
 
 #game window size
@@ -122,6 +133,21 @@ world_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 1],
+[1, 2, 2, 2, 1, 2, 4, 4, 2, 2, 2, 2, 2, 2, 2, 1],
+[1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1],
+]
+
+world_data_two = [
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 2, 0, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -133,7 +159,7 @@ world_data = [
 ]
 
 
-world_data_two = [
+world_data_three = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -148,7 +174,7 @@ world_data_two = [
 [1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 1],
 ]
 
-world_data_three = [
+world_data_four = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -163,10 +189,10 @@ world_data_three = [
 [1, 5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5, 1, 5, 5, 1],
 ]
 
-world_data_four = [
+world_data_five = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-[1, 0, 1, 3, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1],
+[1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 0, 1, 0, 1, 0, 1],
 [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1],
 [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
 [1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 2, 0, 1],
@@ -178,34 +204,19 @@ world_data_four = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1],
 ]
 
-world_data_five = [
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1],
-[1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-[1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 0, 1],
-[1, 0, 1, 0, 1, 3, 3, 3, 6, 3, 3, 0, 0, 1, 0, 1],
-[1, 0, 1, 0, 1, 4, 4, 4, 2, 4, 4, 2, 0, 1, 0, 1],
-[1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0, 1],
-[1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-]
-
 world_data_six = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+[1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 0, 1],
+[1, 5, 3, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 1, 0, 1],
+[1, 5, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 1, 0, 1],
+[1, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+[1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
 world_data_seven = [
@@ -222,6 +233,7 @@ world_data_seven = [
 [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
+
 
 #creating instances of the maps
 world = World(world_data)
@@ -241,7 +253,36 @@ while run == True:
     if seconds>500: # if more than 500 seconds close the game
         break 
 
- 
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    dispCoin = font.render('Coins: ' + str(coins), True, (255,255,255))
+    coinRect = dispCoin.get_rect()
+    coinRect = (0, 10)
+    
+    dispTimer = font.render('Time Left: '+ str(round(timer)), True, (255,255,255))
+    timerRect = dispTimer.get_rect()
+    timerRect = (0,50)
+    
+    dispCurrentMap = font.render('Current Level: '+ str(currentMap), True, (255,255,255))
+    mapNumRect = dispCurrentMap.get_rect()
+    mapNumRect = (0,90)
+    
+    dispMoveTutorial = font.render('To move use the arrow keys', True, (0,0,0))
+    tutorialRect = dispMoveTutorial.get_rect()
+    tutorialRect = (65, 140)
+    
+    dispWaterTutorial = font.render('Avoid water it kills', True, (0,0,0))
+    waterTutorialRect = dispWaterTutorial.get_rect()
+    waterTutorialRect = (65, 180)
+    
+    dispCoinTutorial = font.render('Collect coins to boost your score', True, (0,0,0))
+    coinTutorialRect = dispCoinTutorial.get_rect()
+    coinTutorialRect = (65, 220)
+    
+    dispDoorTutorial = font.render('Reach the door to go to the next level', True, (0,0,0))
+    doorTutorialRect = dispDoorTutorial.get_rect()
+    doorTutorialRect = (65, 260)
+    
+    
     #drawing images onto screen
     screen.blit(sky_image, (0, 0))
     screen.blit(fireflys_image, (100, 100))
@@ -250,6 +291,10 @@ while run == True:
     if timer >= 490:
         world.draw()
         currentMap = 1
+        screen.blit(dispMoveTutorial, tutorialRect)
+        screen.blit(dispWaterTutorial, waterTutorialRect)
+        screen.blit(dispCoinTutorial, coinTutorialRect)
+        screen.blit(dispDoorTutorial, doorTutorialRect)
       
 
     elif timer >= 480 and timer < 490:
@@ -277,18 +322,7 @@ while run == True:
         currentMap = 7
     
     # this must come after world.draw or it will put it behind the tile assets
-    font = pygame.font.Font('freesansbold.ttf', 32)
-    dispCoin = font.render('Coins: ' + str(coins), True, (255,255,255))
-    coinRect = dispCoin.get_rect()
-    coinRect = (0, 15)
-    
-    dispTimer = font.render('Time Left: '+ str(round(timer)), True, (255,255,255))
-    timerRect = dispTimer.get_rect()
-    timerRect = (0,45)
-    
-    dispCurrentMap = font.render('Current Level: '+ str(currentMap), True, (255,255,255))
-    mapNumRect = dispCurrentMap.get_rect()
-    mapNumRect = (0,75)
+   
     
     screen.blit(dispCoin, coinRect)
     screen.blit(dispTimer,timerRect)
