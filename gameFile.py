@@ -1,18 +1,12 @@
 import pygame
 from pygame import image
 from pygame.locals import *
-from socket import *
+import socket
 
-'''
-serverName = 'localHost'
+serverName = '10.0.0.196'
 serverPort = 12000
-clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientSocket.connect((serverName,serverPort))
-clientSocket.sendall(str.encode("\n".join([str(coins),str(round(timer)),str(currentMap)])))
-score = clientSocket.recv(1024)
-print('From Server: ',score.decode())
-clientSocket.close()
-'''
 
 pygame.init()
 
@@ -246,13 +240,22 @@ worldSeven = World(world_data_seven)
 
 run = True
 while run == True:
-    
+    score = 0
     #creates the timer for the game
     seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
     timer = 500 - seconds #creates the timer variable to be passed to server 
-    if seconds>500: # if more than 500 seconds close the game
-        break 
-
+    
+    try:
+        #sending all the variables with commas to be split by the server \n is used
+        #to mark thee beggining of a message
+        clientSocket.sendall(str.encode("\n".join([str(coins),str(timer),str(currentMap)])))
+        #message from the server containing a score
+        score = clientSocket.recv(1024)
+        print('From Server: ',score.decode())
+    except socket.error as e:
+        print(e)
+    
+    #Creating each of the message variable to display text on screen
     font = pygame.font.Font('freesansbold.ttf', 32)
     dispCoin = font.render('Coins: ' + str(coins), True, (255,255,255))
     coinRect = dispCoin.get_rect()
@@ -295,7 +298,6 @@ while run == True:
         screen.blit(dispWaterTutorial, waterTutorialRect)
         screen.blit(dispCoinTutorial, coinTutorialRect)
         screen.blit(dispDoorTutorial, doorTutorialRect)
-      
 
     elif timer >= 480 and timer < 490:
         worldTwo.draw()
@@ -322,19 +324,15 @@ while run == True:
         currentMap = 7
     
     # this must come after world.draw or it will put it behind the tile assets
-   
-    
     screen.blit(dispCoin, coinRect)
     screen.blit(dispTimer,timerRect)
     screen.blit(dispCurrentMap, mapNumRect)
-    
-    
-    
 
     #making event handler to look for QUIT input
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+            clientSocket.close()
             
 
     pygame.display.update()

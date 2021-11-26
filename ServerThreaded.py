@@ -28,19 +28,21 @@ def threaded_client(conn):
     
     while True:
         try:
-            coin, timer, map = [int(i) for i in conn.recv(1024).decode().split('\n')]
+            coins, timer, currentMap = [int(i) for i in conn.recv(1024).decode().split('\n')]
             
-            if not coin:
+            if not coins:
                 print ("Disconnected")
                 break
             else:
-                score = coin * round(timer)
+                score = coins * round(timer)
                 
                 print("sending " +  str(score))
                 
             conn.send(str(score).encode())
         except:
             break
+    print("lost connection")
+    conn.close()
 
 while True:
     conn, addr = s.accept()
