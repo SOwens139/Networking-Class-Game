@@ -24,29 +24,40 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for connection, Server Started")
 
-def threaded_client(conn):
+scores = [0,0]
+
+def threaded_client(conn, player):
     
     while True:
         try:
-            coins, timer, currentMap = [int(i) for i in conn.recv(1024).decode().split('\n')]
+            coins, timer = [int(i) for i in conn.recv(1024).decode().split('\n')]
             
             if not coins:
                 print ("Disconnected")
                 break
             else:
-                score = coins * round(timer)
+                if player == 0:
+                    scores[0] = coins * timer
                 
-                print("sending " +  str(score))
-                
-            conn.send(str(score).encode())
+                    print("sending " +  str(scores[0]))
+                elif player == 1:
+                    scores[1] = coins * timer
+                    
+                    print("sending " +  str(scores[1]))
+                else:
+                    break
+            conn.send(str(scores).encode())
         except:
             break
     print("lost connection")
     conn.close()
 
+currentPlayer = 0
+
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
     
-    start_new_thread(threaded_client, (conn,))
+    start_new_thread(threaded_client, (conn, currentPlayer))
+    currentPlayer += 1
     
