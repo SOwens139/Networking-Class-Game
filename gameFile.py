@@ -4,29 +4,19 @@ from pygame.locals import *
 import socket
 import re
 
-'''
+
 serverName = '10.0.0.196'
-serverPort = 12000
+serverPort = 5555
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientSocket.connect((serverName,serverPort))
+'''
 
-    try:
-        #sending all the variables with commas to be split by the server \n is used
-        #to mark thee beggining of a message
-        clientSocket.sendall(str.encode("\n".join([str(coins),str(timer)])))
-        #message from the server containing the score variables
-        scores = clientSocket.recv(1024).decode()
-        scores = re.split(',|\[|\]',scores)
-        #storing the score variables 
-        p1Score = int(scores[1])
-        p2Score = int(scores[2])
-
-       
-    except socket.error as e:
-        print(e)
-        
-clientSocket.close()
+#sending all the variables with commas to be split by the server \n is used
+#to mark the beggining of a message
+while True:
    
+    
+
 '''
 pygame.init()
 
@@ -41,10 +31,13 @@ pygame.display.set_caption('Life and Sword')
 
 #game vars
 tile_size = 64
-coins = 0 
-currentMap = 0 
+coins = 1
+currentMap = 0
+mapFlag = 1
 p1Score = 0
 p2Score = 0
+playerNum = 0
+winCheck = 0
 
 #image loading into memory
 fireflys_image = pygame.image.load('Assets/Effect_fireflys.png')
@@ -265,24 +258,26 @@ while run == True:
     
     #creates the timer for the game
     seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
-    timer = 500 - round(seconds) #creates the timer variable to be passed to server 
+    timer = 500 - round(seconds) #creates the timer variable to be passed to server
+    
+    
     
     #Creating each of the message variable to display text on screen
     font = pygame.font.Font('freesansbold.ttf', 32)
     #coin display top left
-    dispCoin = font.render('Coins: ' + str(coins), True, (255,255,255))
+    dispCoin = font.render('Coins: ' + str(coins - 1), True, (255,255,255))
     coinRect = dispCoin.get_rect()
-    coinRect = (0, 10)
+    coinRect = (10, 10)
     
     #timer display top left
     dispTimer = font.render('Time Left: '+ str(timer), True, (255,255,255))
     timerRect = dispTimer.get_rect()
-    timerRect = (0,50)
+    timerRect = (10,50)
     
     #current mapp display top left
     dispCurrentMap = font.render('Current Level: '+ str(currentMap), True, (255,255,255))
     mapNumRect = dispCurrentMap.get_rect()
-    mapNumRect = (0,90)
+    mapNumRect = (10,90)
     
     #player 1 score display top right
     dispP1Score = font.render('Player 1 Score: '+ str(p1Score), True, (255,255,255))
@@ -293,6 +288,19 @@ while run == True:
     dispP2Score = font.render('Player 2 Score: '+ str(p2Score), True, (255,255,255))
     p2scoreRect = dispP2Score.get_rect()
     p2scoreRect = (600,90)
+    
+    if winCheck == 1:
+        dispWin = font.render('Player 1 wins: ', True, (255,255,255))
+        winRect = dispWin.get_rect()
+        winRect = (300,10)
+    elif winCheck == 2:
+        dispWin = font.render('Player 2 wins: ', True, (255,255,255))
+        winRect = dispWin.get_rect()
+        winRect = (300,10)
+    else:
+        dispWin = font.render('No winner yet: ', True, (255,255,255))
+        winRect = dispWin.get_rect()
+        winRect = (300,10)
     
     #display for current winner top right
     if p1Score > p2Score:
@@ -333,6 +341,7 @@ while run == True:
     #calling draw function
     if timer >= 490:
         world.draw()
+        #replace this call with a collision check if collide with goal mapflag += 1
         currentMap = 1
         screen.blit(dispMoveTutorial, tutorialRect)
         screen.blit(dispWaterTutorial, waterTutorialRect)
@@ -359,11 +368,11 @@ while run == True:
         worldSix.draw()
         currentMap = 6
         
-    else:
+    elif timer < 440:
         worldSeven.draw()
         currentMap = 7
     
-   
+ 
     
     #This calls the text display objects made above
     # this must come after world.draw or it will put it behind the tile assets
@@ -373,11 +382,46 @@ while run == True:
     screen.blit(dispP1Score, p1scoreRect)
     screen.blit(dispP2Score, p2scoreRect)
     screen.blit(dispCurrentWin, currentWinRect)
+    screen.blit(dispWin, winRect)
 
+    try:
+     
+        #sending all the variables with commas to be split by the server \n is used
+        #to mark thee beggining of a message
+        clientSocket.sendall(str.encode("\n".join([str(coins),str(timer), str(currentMap), str(mapFlag)])))
+            
+        #message from the server containing a score
+        data = clientSocket.recv(1024).decode()
+        data = re.split(',|\[|\]',data)
+            
+        p1Score = int(data[1])
+        p2Score = int(data[2])
+        currentMap = int(data[3])
+        mapFlag = int(data[4])
+        playerNum = int(data[5])
+        winCheck = int(data[6])
+        print('Player One Score: ',p1Score)
+        print('Player Two Score: ',p2Score)
+        print('Current map: ',currentMap)
+        print('Map Flag: ',mapFlag)
+        print('You Are Player Number: ',playerNum + 1)
+        print(winCheck)
+        if winCheck == 1:
+            print('Player 1 wins ')
+        elif winCheck == 2:
+            print('Player 2 wins ')
+        
+            
+    except socket.error as e:
+        print(e)
     #making event handler to look for QUIT input
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+            clientSocket.close() 
+            
+            #closing connection
+           
             
             
 
